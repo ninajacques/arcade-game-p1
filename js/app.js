@@ -5,27 +5,25 @@ class Enemy {
         this.y = y;
         this.sprite = 'images/enemy-bug.png';   
     }
-    // As variáveis aplicadas a nossas instâncias entram aqui.
-    // Fornecemos uma a você para que possa começcar.
-
-    // A imagem/sprite de nossos inimigos, isso usa um
-    // ajudante que é fornecido para carregar imagens
-    // com facilidade.
-};
-
-// Atualize a posição do inimigo, método exigido pelo jogo
-// Parâmetro: dt, um delta de tempo entre ticks
-Enemy.prototype.update = function(dt) {
-    const speed = Math.floor(Math.random() * (100 - 50)) + 50;
-    return this.x += (speed*dt);
-    // Você deve multiplicar qualquer movimento pelo parâmetro
-    // dt, o que garantirá que o jogo rode na mesma velocidade
-    // em qualquer computador.
-};
-
-// Desenhe o inimigo na tela, método exigido pelo jogo
-Enemy.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+    collision() {
+        return ((this.x + 80 > player.x
+            && this.x + 80 < player.x + 101
+            || this.x >= player.x
+            && this.x < player.x + 80))
+            && this.y === player.y;
+    }
+    render() {
+        ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+    }
+    update(dt) {
+        if (this.collision()) {
+            alert('Você foi pego! Aperte enter para reiniciar o jogo!');
+            reset();
+        } else {
+            const speed = Math.floor(Math.random() * (300 - 100)) + 100;
+            return this.x += (speed*dt);
+        }
+    }
 };
 
 // Agora, escreva sua própria classe de jogador
@@ -37,15 +35,22 @@ class Player {
         this.y = 440;
         this.sprite = 'images/char-boy.png';
     }
-};
-
-Player.prototype.update = function(dt) {
-    const speed = Math.floor(Math.random() * (100 - 50)) + 50;
-    return speed;
-};
-
-Player.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+    reset() {
+        this.x = 200;
+        this.y = 440;
+    }
+    update(dt) {
+        if (this.y === -40) {
+            alert('Você venceu! Aperte enter para jogar novamente!');
+            reset();
+        } else{
+            const speed = Math.floor(Math.random() * (100 - 50)) + 50;
+            return speed;
+        }
+    }
+    render() {
+        ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+    }
 };
 
 Player.prototype.handleInput = function(key) {
@@ -73,6 +78,10 @@ Player.prototype.handleInput = function(key) {
   }
 };
 
+const reset = function() {
+    player.reset();
+    allEnemies = [];
+};
 
 // Represente seus objetos como instâncias.
 // Coloque todos os objetos inimgos numa array allEnemies
@@ -84,7 +93,7 @@ let callEnemies = function() {
     setInterval(function() {
         const num = [40,120,200];
         let newEnemy = allEnemies.push(new Enemy(num[Math.floor(Math.random()*3)]));
-    },2000);    
+    },800);    
 };
 callEnemies();
 
@@ -102,21 +111,3 @@ document.addEventListener('keyup', function(e) {
 
     player.handleInput(allowedKeys[e.keyCode]);
 });
-
-Player.prototype.checkCollisions = function() {
-        let playerX = this.offsetLeft; //capturando a posição em x
-        let playerY = this.offsetTop; //capturando a posição em y
-        let playerW = this.offsetWidth; //capturando a largura
-        let playerH = this.offsetHeight; //capturando a altura
-
-        let enemyX = Enemy.offsetLeft; //capturando a posição em x
-        let enemyY = Enemy.offsetTop; //capturando a posição em y
-        let enemyW = Enemy.offsetWidth; //capturando a largura
-        let enemyH = Enemy.offsetHeight; //capturando a altura
-
-        let collisionX = (playerX + playerW >= enemyX) && (enemyX + enemyW >= playerX);
-        let collisionY = (playerY + playerH >= enemyY) && (enemyY + enemyH >= playerY);
-        if (collisionY && collisionX) {
-            alert("You Loose!");
-        };
-};

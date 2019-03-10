@@ -67,7 +67,6 @@ var Engine = (function(global) {
      * exigida para o loop do jogo.
      */
     function init() {
-        reset();
         lastTime = Date.now();
         main();
     }
@@ -84,7 +83,6 @@ var Engine = (function(global) {
      */
     function update(dt) {
         updateEntities(dt);
-        //allEnemies.checkCollisions();
     }
 
     /* É chamada pela função update, faz loops por todos os objetos dentro
@@ -159,15 +157,6 @@ var Engine = (function(global) {
         });
 
         player.render();
-    }
-
-    /* Esta função não faz nada, mas pode ser um bom local para lidar com os
-     * estados de reinicialização do jogo - talvez, um novo menu de jogo, uma
-     * tela de fim de jogo ou coisas assim. É chamada só uma vez pelo
-     * método init().
-     */
-    function reset() {
-        // noop
     }
 
     /* Vá em frente e carregue todas as imagens que sabemos que serão
